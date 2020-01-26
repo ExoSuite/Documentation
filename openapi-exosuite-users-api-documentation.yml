@@ -1,0 +1,5233 @@
+openapi: 3.0.0
+info:
+  title: ExoSuite Users API
+  version: 1.5.18
+servers:
+- url: https://api.teamexosuite.cloud
+paths:
+  /user/me/run/{run]/checkpoint/:
+    post:
+      tags:
+      - Checkpoint
+      summary: Create a new checkpoint
+      description: Create a new checkpoint, and returns the information about the
+        created checkpoint. Field 'location' must be an array of geometric arrays
+        (which first value represents longitude, and second value represents latitude)
+        which must be valid polygons.
+      operationId: createCheckPoint
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCheckpoint'
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCheckpointResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/me/run/{run]/checkpoint/checkpoints:
+    post:
+      tags:
+      - Checkpoint
+      summary: Create multiple checkpoints at the same time in the wanted order.
+      description: Create multiple checkpoints by providing an array of data containing
+        checkpoints' hints on their order (field id) and their location (field location).
+      operationId: createCheckPoints
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCheckpoints'
+      responses:
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/me/run/{run}/checkpoint/{checkpoint}/:
+    get:
+      tags:
+      - Checkpoint
+      summary: Get my checkpoint information
+      description: Get information about a checkpoint of your own.
+      operationId: getMyCheckpointByID
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      - name: checkpoint
+        in: path
+        description: Checkpoint id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCheckpointByIDResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+    delete:
+      tags:
+      - Checkpoint
+      summary: Delete a checkpoint
+      description: Delete a checkpoint.
+      operationId: deleteCheckpoint
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      - name: checkpoint
+        in: path
+        description: Checkpoint id
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+    patch:
+      tags:
+      - Checkpoint
+      summary: Modify a checkpoint
+      description: Modify a checkpoint, and returns the modified information about
+        the checkpoint.
+      operationId: patchCheckpoint
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      - name: checkpoint
+        in: path
+        description: Checkpoint id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchCheckpoint'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchCheckpointResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/{user}/run/{run}/checkpoint/{checkpoint}/:
+    get:
+      tags:
+      - Checkpoint
+      summary: Get someone's checkpoint information
+      description: Get information about a checkpoint of someone else.
+      operationId: getSomeoneCheckpointByID
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      - name: checkpoint
+        in: path
+        description: Checkpoint id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCheckpointByIDResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/me/run/{run}/checkpoint/:
+    get:
+      tags:
+      - Checkpoint
+      summary: Get all the checkpoints belonging to a run of your own
+      description: Get information about your run's checkpoints (including their times).
+        Paginates results, with CheckpointController::GET_PER_PAGE checkpoints per
+        page.
+      operationId: getMyCheckpoints
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCheckpointsResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/{user}/run/{run}/checkpoint/:
+    get:
+      tags:
+      - Checkpoint
+      summary: Get someone's run's checkpoints
+      description: Get information (including their times) about the checkpoints of
+        a run belonging to someone else. Paginates results, with CheckpointController::GET_PER_PAGE
+        checkpoints per page.
+      operationId: getSomeoneCheckpoints
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCheckpointsResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  user/{user}/dashboard/posts/{post}/commentaries/:
+    get:
+      tags:
+      - Commentary
+      summary: Get commentaries from post.
+      description: Get the commentaries published on the provided post.
+      operationId: getCommsFromPost
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: post
+        in: path
+        description: Post id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCommentariesResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - Commentary
+      summary: Publish a new commentary.
+      description: Create a new commentary on a post, and returns the information
+        about the created commentary.
+      operationId: createCommentary
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: post
+        in: path
+        description: Post id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCommentary'
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCommentaryResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/{user}/dashboard/posts/{post}/commentaries/{commentary}/:
+    patch:
+      tags:
+      - Commentary
+      summary: Modify a commentary.
+      description: Allow the author to modify his commentary.
+      operationId: updateCommentary
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: post
+        in: path
+        description: Post id
+        required: true
+        schema:
+          type: string
+      - name: commentary
+        in: path
+        description: Commentary id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchCommentary'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchCommentaryResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/{user}/dashboard/posts/{post}/commentaries/{commentary}:
+    delete:
+      tags:
+      - Commentary
+      summary: Delete a commentary.
+      description: Allow an author to delete a commentary of his own.
+      operationId: deleteComm
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: post
+        in: path
+        description: Post id
+        required: true
+        schema:
+          type: string
+      - name: commentary
+        in: path
+        description: Commentary id
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/me/dashboard/restriction:
+    patch:
+      tags:
+      - Dashboard
+      summary: Change Dashboard restriction
+      description: Allow the requirer to change his dashboard's restriction level.
+      operationId: patchDashboardRestriction
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDashboardRestriction'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchDashboardRestrictionResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/me/dashboard/restrictions/:
+    get:
+      tags:
+      - Dashboard
+      summary: Get dashboard restriction
+      description: Get requester's dashboard restriction.
+      operationId: getRestriction
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDashboardRestrictionResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/{user}/dashboard/:
+    get:
+      tags:
+      - Dashboard
+      summary: Get dashboard id
+      description: Get the provided user's dashboard id.
+      operationId: getDashboardId
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDashboardIdResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/{user}/follows/:
+    get:
+      tags:
+      - Follow
+      summary: Get if i am following.
+      description: Get a boolean which indicate if the requiring user is following
+        the target.
+      operationId: checkIfIamFollowing
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAmIFollowingResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - Follow
+      summary: Create a follow.
+      description: Create a new realtion as follower (requiring user as follower and
+        target as followed one).
+      operationId: createFollow
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateFollowResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+      - Follow
+      summary: Delete a follow.
+      description: Delete the 'follow' relation existing between the requiring user
+        and the target (requiring user as follower and target as followed one).
+      operationId: deleteFollow
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/{user}/follows/followers/:
+    get:
+      tags:
+      - Follow
+      summary: Get followers.
+      description: Get followers from someone.
+      operationId: getFollowers
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFollowersResponse'
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/me/follows/followers/:
+    get:
+      tags:
+      - Follow
+      summary: Get my followers.
+      description: Get all followers from someone.
+      operationId: getFollowers
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFollowersResponse'
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/{user}/follows/followers/count/:
+    get:
+      tags:
+      - Follow
+      summary: Get user's followers count.
+      description: Get the number of followers for a given user.
+      operationId: getFollowersCount
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFollowersCountResponse'
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/me/follows/followers/count/:
+    get:
+      tags:
+      - Follow
+      summary: Get my followers count.
+      description: Get the number of followers for a given user.
+      operationId: getFollowersCount
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFollowersCountResponse'
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/{user}/follows/following/:
+    get:
+      tags:
+      - Follow
+      summary: Get user's follows.
+      description: Get all the follows from a given user.
+      operationId: getFollows
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFollowsResponse'
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/me/follows/following/:
+    get:
+      tags:
+      - Follow
+      summary: Get my follows.
+      description: Get all the follows from a given user.
+      operationId: getFollows
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFollowersResponse'
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/{user}/follows/following/count/:
+    get:
+      tags:
+      - Follow
+      summary: Get user's follows count.
+      description: Get the number of follows for a given user.
+      operationId: getFollowsCount
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFollowersCountResponse'
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/me/follows/following/count/:
+    get:
+      tags:
+      - Follow
+      summary: Get my follows count.
+      description: Get the number of follows for a given user.
+      operationId: getFollowsCount
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFollowersCountResponse'
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/{user}/friendship/:
+    get:
+      tags:
+      - Friendship
+      summary: Get friends from someone.
+      description: Get the friendlist of the targeted user.
+      operationId: getFriendships
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFriendshipsResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - Friendship
+      summary: Create a friendship request.
+      description: Create a new friendship request sent to the target.
+      operationId: sendFriendshipRequest
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateFriendshipRequestResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+      - Friendship
+      summary: Delete a friendship
+      description: Delete a friendship relation between the requiring user and the
+        target.
+      operationId: deleteFriendships
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /me/friendship/{request}/accept:
+    post:
+      tags:
+      - Friendship
+      summary: Accept friendship request.
+      description: Accept a new friendship and create a new relation 'friendship'.
+      operationId: acceptRequest
+      parameters:
+      - name: request
+        in: path
+        description: Pending Request id
+        required: true
+        schema:
+          type: string
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateFriendshipResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /me/friendship/{request}/decline:
+    post:
+      tags:
+      - Friendship
+      summary: Decline friendship request.
+      description: Decline a new friendship request.'.
+      operationId: declineRequest
+      parameters:
+      - name: request
+        in: path
+        description: Pending Request id
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/{user}/friendship/existingFriendship:
+    get:
+      tags:
+      - Friendship
+      summary: Get if you are friend with the user $user.
+      description: Returns false if there is a friendship request still pending or
+        if a Friendship relation with the target $user does not exist. Returns true
+        otherwise.
+      operationId: getMyFriendshipWith
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetMyFriendshipWithResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /me/friendship/:
+    get:
+      tags:
+      - Friendship
+      summary: Get my friends.
+      description: Get the friendlist of the current user.
+      operationId: getMyFriendships
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFriendshipsResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /group/:
+    post:
+      tags:
+      - Group
+      summary: Create a new group
+      description: Create a new group, and returns the information about the created
+        group.
+      operationId: createGroup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGroup'
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateGroupResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /group/{group}/:
+    get:
+      tags:
+      - Group
+      summary: Get group information
+      description: Get information about a group.
+      operationId: getGroup
+      parameters:
+      - name: group
+        in: path
+        description: Group id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupModel'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+    delete:
+      tags:
+      - Group
+      summary: Delete a group
+      description: Delete a group, and all the associated messages.
+      operationId: deleteGroup
+      parameters:
+      - name: group
+        in: path
+        description: Group id
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+    patch:
+      tags:
+      - Group
+      summary: Modify a group
+      description: Modify a group, and returns the modified information about the
+        group.
+      operationId: patchGroup
+      parameters:
+      - name: group
+        in: path
+        description: Group id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchGroup'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupModel'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  user/{user}/dashboard/posts/{post}/likes/:
+    get:
+      tags:
+      - Like
+      summary: Get post's likes.
+      description: Get the likes associate with a post id.
+      operationId: getLikesFromID
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: post
+        in: path
+        description: Post id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/LikeModel'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - Like
+      summary: Like a post.
+      description: Create a like on a post.
+      operationId: LikePost
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: post
+        in: path
+        description: Post id
+        required: true
+        schema:
+          type: string
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateLikeOnPostResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/{user}/dashboard/commentaries/{commentary}/likes/:
+    get:
+      tags:
+      - Like
+      summary: Get commentaries' likes.
+      description: Get the likes associate with a commentary id.
+      operationId: getLikesFromID
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: commentary
+        in: path
+        description: Commentary id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/LikeModel'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - Like
+      summary: Like a commentary.
+      description: Create a like on a commentary.
+      operationId: LikeCommentary
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: commentary
+        in: path
+        description: Commentary id
+        required: true
+        schema:
+          type: string
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateLikeOnCommentaryResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/{user}/dashboard//posts/{post}/likes/:
+    delete:
+      tags:
+      - Like
+      summary: Delete a like
+      description: Delete the like link existing between the requiring user and the
+        entity provided.
+      operationId: deleteLikeOnPost
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: post
+        in: path
+        description: Post id
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  '{user}​/dashboard/{dashboard}​/post​/{post}/commentary​/{commentary}​​/likes​/':
+    delete:
+      tags:
+      - Like
+      summary: Delete a like
+      description: Delete the like link existing between the requiring user and the
+        entity provided.
+      operationId: deleteLikeOnCommentary
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: commentary
+        in: path
+        description: Commentary id
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /auth/login:
+    post:
+      tags:
+      - Auth
+      summary: Login a user
+      description: 'Login user and returns tokens generated by Passport route : /oauth/tokens'
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /group/{group}/message/:
+    get:
+      tags:
+      - Message
+      summary: Get one page of group's messages
+      description: Returns one page of group's messages (Number of messages per page
+        according to MessageController::GET_PER_PAGE)
+      operationId: getMessage
+      parameters:
+      - name: group
+        in: path
+        description: Group id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetMessageResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+    post:
+      tags:
+      - Message
+      summary: Create a message
+      description: Create a message.
+      operationId: createMessage
+      parameters:
+      - name: group
+        in: path
+        description: Group id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMessage'
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateMessageResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /group/{group}/message/{message}/:
+    delete:
+      tags:
+      - Message
+      summary: Delete a message
+      description: Delete a message that belongs to a group.
+      operationId: deleteMessage
+      parameters:
+      - name: group
+        in: path
+        description: Group id
+        required: true
+        schema:
+          type: string
+      - name: message
+        in: path
+        description: Message id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+    patch:
+      tags:
+      - Message
+      summary: Modify message's contents
+      description: Modify message's contents.
+      operationId: patchMessage
+      parameters:
+      - name: group
+        in: path
+        description: Group id
+        required: true
+        schema:
+          type: string
+      - name: message
+        in: path
+        description: Message id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchMessage'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchMessageResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /notification/{notification?}/:
+    delete:
+      tags:
+      - Notification
+      summary: Delete a notification
+      description: This route will delete the specified notification, or delete all
+        user's notifications if no notification ID is specified as parameter.
+      operationId: deleteNotification
+      parameters:
+      - name: notification
+        in: path
+        description: Notification id
+        required: false
+        schema:
+          type: string
+      responses:
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+    patch:
+      tags:
+      - Notification
+      summary: Mark as read a notification
+      description: This route will mark as read the specified notification, or mark
+        as read all user's notifications if no notification ID is specified as parameter.
+      operationId: patchNotification
+      parameters:
+      - name: notification
+        in: path
+        description: Notification id
+        required: false
+        schema:
+          type: string
+      responses:
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /notification/:
+    get:
+      tags:
+      - Notification
+      summary: Get user notifications
+      description: Get all the notifications of the currently logged user. /!\ The
+        notification's content may be proper to the NotificationType (field type).
+        /!\
+      operationId: getNotification
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetNotificationsResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  user/{user}/pending_requests/:
+    post:
+      tags:
+      - PendingRequest
+      summary: Create pending request.
+      description: Create a new pending request.
+      operationId: createPendingRequest
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePendingRequest'
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePendingRequestResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /me/pending_requests/:
+    get:
+      tags:
+      - PendingRequest
+      summary: Get pending requests.
+      description: Get the pending requests from the requiring user.
+      operationId: getMyPendings
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/PendingRequestModel'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /me/pending_requests/{request}:
+    delete:
+      tags:
+      - PendingRequest
+      summary: Delete a pending request.
+      description: Delete the passed in parameter pending request (the requiring user
+        must be the target of the request).
+      operationId: deletePending
+      parameters:
+      - name: request
+        in: path
+        description: Pending Request id
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/{user}/dashboard/posts/:
+    get:
+      tags:
+      - Post
+      summary: Get posts from dashboard.
+      description: Get the posts published on the provided dashboard.
+      operationId: getPostsFromDashboard
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPostsResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - Post
+      summary: Publish a new post.
+      description: Create a new post on a dashboard, and returns the information about
+        the created post.
+      operationId: createPost
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePost'
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePostResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  user/{user}/dashboard/posts/{post}:
+    delete:
+      tags:
+      - Post
+      summary: Delete a post
+      description: Delete a post and the commentaries associated.
+      operationId: deletePost
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: post
+        in: path
+        description: Post id
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      tags:
+      - Post
+      summary: Modify a post.
+      description: Allow the author to modify his post.
+      operationId: updatePost
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: post
+        in: path
+        description: Post id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchPost'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchPostResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /user/me/run/{run]/record/:
+    post:
+      tags:
+      - Record
+      summary: Create a new empty record
+      description: Create a new basic record based on an UserRun ID provided in body
+        parameter. To call after the creation on a UserRun.
+      operationId: createRecord
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRecord'
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateRecordResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/me/run/{run}/record/{record}/:
+    delete:
+      tags:
+      - Record
+      summary: Delete a record
+      description: Delete a record.
+      operationId: deleteRecord
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      - name: record
+        in: path
+        description: Record id
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+    patch:
+      tags:
+      - Record
+      summary: Update the record at the end of the run.
+      description: Update all record's fields. To call at the end of a run, just after
+        an UserRun update.
+      operationId: patchRecord
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      - name: record
+        in: path
+        description: Record id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchRecord'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchRecordResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/me/run/{run}/record/:
+    get:
+      tags:
+      - Record
+      summary: Get your records informations
+      description: Get information about your best record's datas for a given Run.
+      operationId: getMyRecords
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRecordsResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/{user}/run/{run}/record/:
+    get:
+      tags:
+      - Record
+      summary: Get someone's run's records
+      description: Get information about someone's run's records data.
+      operationId: getSomeoneRecords
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRecordsResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /auth/register:
+    post:
+      tags:
+      - Auth
+      summary: Register a user
+      description: 'Register user and returns tokens generated by Passport route :
+        /oauth/tokens'
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+      responses:
+        201:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /user/me/run/:
+    get:
+      tags:
+      - Run
+      summary: Get all my runs
+      description: Get information about your runs (including their checkpoints and
+        their associated times). Paginates results, with RunController::GET_PER_PAGE
+        runs per page.
+      operationId: getMyRuns
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRunsResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+    post:
+      tags:
+      - Run
+      summary: Create a new run
+      description: Create a new run, and returns the information about the created
+        run.
+      operationId: createRun
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRun'
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateRunResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/me/run/{run}/:
+    get:
+      tags:
+      - Run
+      summary: Get my run information
+      description: Get information about a run of your own.
+      operationId: getMyRunByID
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRunByIDResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+    delete:
+      tags:
+      - Run
+      summary: Delete a run
+      description: Delete a run.
+      operationId: deleteRun
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+    patch:
+      tags:
+      - Run
+      summary: Modify a run
+      description: Modify a run, and returns the modified information about the run.
+      operationId: patchRun
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchRun'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchRunResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/{user}/run/{run}/:
+    get:
+      tags:
+      - Run
+      summary: Get someone's run information
+      description: Get information about a run of someone else.
+      operationId: getSomeoneRunByID
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRunByIDResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/{user}/run/:
+    get:
+      tags:
+      - Run
+      summary: Get someone's runs
+      description: Get information (including their checkpoints and their associated
+        times) about the runs of someone else. Paginates results, with RunController::GET_PER_PAGE
+        runs per page.
+      operationId: getSomeoneRuns
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRunsResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/{user}/run/search:
+    get:
+      tags:
+      - Run
+      summary: Search someone's runs
+      description: Search and return simple array of runs.
+      operationId: searchUserRun
+      parameters:
+      - name: text
+        in: query
+        description: The text to search a run
+        required: true
+        allowEmptyValue: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchRunsResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/me/run/search:
+    get:
+      tags:
+      - Run
+      - My
+      summary: Search my runs
+      description: Search and return simple array of runs.
+      operationId: searchMyUserRun
+      parameters:
+      - name: text
+        in: query
+        description: The text to search a run
+        required: true
+        allowEmptyValue: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchRunsResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/me/run/{run]/checkpoint/{checkpoint}/time/:
+    post:
+      tags:
+      - Time
+      summary: Create a new time
+      description: Create a new time, and returns the information about the created
+        time.
+      operationId: createTime
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      - name: checkpoint
+        in: path
+        description: Checkpoint id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTime'
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTimeResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/me/run/{run}/checkpoint/{checkpoint}/time/{time}/:
+    get:
+      tags:
+      - Time
+      summary: Get my time information
+      description: Get information about a time of your own.
+      operationId: getMyTimeByID
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      - name: checkpoint
+        in: path
+        description: Checkpoint id
+        required: true
+        schema:
+          type: string
+      - name: time
+        in: path
+        description: Time id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTimeByIDResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+    delete:
+      tags:
+      - Time
+      summary: Delete a time
+      description: Delete a time.
+      operationId: deleteTime
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      - name: checkpoint
+        in: path
+        description: Checkpoint id
+        required: true
+        schema:
+          type: string
+      - name: time
+        in: path
+        description: Time id
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+    patch:
+      tags:
+      - Time
+      summary: Modify a time
+      description: Modify a time, and returns the modified information about the time.
+      operationId: patchTime
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      - name: checkpoint
+        in: path
+        description: Checkpoint id
+        required: true
+        schema:
+          type: string
+      - name: time
+        in: path
+        description: Time id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchTime'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchTimeResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/{user}/run/{run}/checkpoint/{checkpoint}/time/{time}/:
+    get:
+      tags:
+      - Time
+      summary: Get someone's time information
+      description: Get information about a time of someone else.
+      operationId: getSomeoneTimeByID
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      - name: checkpoint
+        in: path
+        description: Checkpoint id
+        required: true
+        schema:
+          type: string
+      - name: time
+        in: path
+        description: Time id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTimeByIDResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/me/run/{run}/checkpoint/{checkpoint}/time/:
+    get:
+      tags:
+      - Time
+      summary: Get all the times belonging to a checkpoint of your own
+      description: Get information about your checkpoint's times . Paginates results,
+        with TimeController::GET_PER_PAGE times per page.
+      operationId: getMyTimes
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      - name: checkpoint
+        in: path
+        description: Checkpoint id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTimesResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/{user}/run/{run}/checkpoint/{checkpoint}/time/:
+    get:
+      tags:
+      - Time
+      summary: Get someone's checkpoint's times
+      description: Get information about the times of a checkpoint belonging to someone
+        else. Paginates results, with TimeController::GET_PER_PAGE times per page.
+      operationId: getSomeoneTimes
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      - name: checkpoint
+        in: path
+        description: Checkpoint id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTimesResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/me:
+    get:
+      tags:
+      - User
+      summary: Get UserResponse
+      description: Bearer token is required
+      operationId: getUser
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        401:
+          description: Unauthorized
+      security:
+      - passport: {}
+  /user/search:
+    get:
+      tags:
+      - User
+      summary: Search a UserResponse
+      description: Bearer token is required
+      operationId: SearchUser
+      parameters:
+      - name: text
+        in: query
+        description: The text to search a user
+        required: true
+        allowEmptyValue: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+        401:
+          description: Unauthorized
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/me/groups:
+    get:
+      tags:
+      - User
+      - Group
+      summary: Get my groups
+      description: Bearer token is required
+      operationId: getMyGroups
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserGetMyGroupsResponse'
+        401:
+          description: Unauthorized
+      security:
+      - passport: {}
+  /user/me/profile:
+    post:
+      tags:
+      - UserProfile
+      summary: Create UserResponse Profile
+      description: Request Body is not mandatory but Bearer token is required
+      operationId: createRegister
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+      responses:
+        201:
+          description: successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Unauthorized
+      security:
+      - passport: {}
+    patch:
+      tags:
+      - UserProfile
+      summary: Update UserResponse Profile
+      description: Request Body is not mandatory but Bearer token is required
+      operationId: patchRegister
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+      responses:
+        204:
+          description: successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Unauthorized
+      security:
+      - passport:
+        - '*'
+  /user/me/:
+    get:
+      tags:
+      - UserProfile
+      summary: Get UserResponse Profile
+      description: Bearer token is required
+      operationId: getRegister
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserProfileResponse'
+        401:
+          description: Unauthorized
+      security:
+      - passport: {}
+  /user/{user}/profile/:
+    get:
+      tags:
+      - UserProfile
+      summary: Get user profile
+      description: Return the profile of the targeted user.
+      operationId: getUserProfile
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserProfileResponse'
+        401:
+          description: Unauthorized
+      security:
+      - passport: {}
+  user/me/profile/restrictions:
+    get:
+      tags:
+      - UserProfileRestrictions
+      summary: Get user's profile restrictions
+      description: Return the profile access rules of the user.
+      operationId: getMyProfileRestrictions
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileRestrictions'
+        401:
+          description: Unauthorized
+      security:
+      - passport: {}
+    patch:
+      tags:
+      - UserProfileRestrictions
+      summary: Update Profile Restrictions
+      description: Request Body is not mandatory but Bearer token is required
+      operationId: patchProfileRestrictions
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfileRestrictions'
+      responses:
+        204:
+          description: successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Unauthorized
+      security:
+      - passport: {}
+  /user/{user}/profile/restrictions:
+    get:
+      tags:
+      - UserProfileRestrictions
+      summary: Get someone's profile restrictions
+      description: Return the profile access rules of the targeted user.
+      operationId: getUserProfileRestrictions
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileRestrictions'
+        401:
+          description: Unauthorized
+      security:
+      - passport: {}
+  /user/me/run/{run]/user_run/:
+    post:
+      tags:
+      - UserRun
+      summary: Create a new user run
+      description: Create a new user run, and returns the information about the created
+        user run.
+      operationId: createUserRun
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUserRunResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/me/run/{run}/user_run/{user_run}/:
+    get:
+      tags:
+      - UserRun
+      summary: Get my user run information
+      description: Get information about a user run of your own.
+      operationId: getMyUserRunByID
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      - name: user_run
+        in: path
+        description: User run id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserRunByIDResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+    delete:
+      tags:
+      - UserRun
+      summary: Delete a user run
+      description: Delete a user run.
+      operationId: deleteUserRun
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      - name: user_run
+        in: path
+        description: User run id
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Successful operation
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+    patch:
+      tags:
+      - UserRun
+      summary: Modify a user run
+      description: Update the total ran time.
+      operationId: patchUserRun
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      - name: user_run
+        in: path
+        description: User run id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchUserRunResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/{user}/run/{run}/user_run/{user_run}/:
+    get:
+      tags:
+      - UserRun
+      summary: Get someone's user run information
+      description: Get information about a user run of someone else.
+      operationId: getSomeoneUserRunByID
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      - name: user_run
+        in: path
+        description: User run id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserRunByIDResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/me/run/{run}/user_run/:
+    get:
+      tags:
+      - UserRun
+      summary: Get all your user runs belonging to a run of your own
+      description: Get information about your run's user runs . Paginates results,
+        with UserRunController::GET_PER_PAGE times per page.
+      operationId: getMyUserRuns
+      parameters:
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserRunsResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+  /user/{user}/run/{run}/user_run/:
+    get:
+      tags:
+      - UserRun
+      summary: Get someone's user runs
+      description: Get information about the user runs of someone else. Paginates
+        results, with UserRunsController::GET_PER_PAGE times per page.
+      operationId: getSomeoneUserRuns
+      parameters:
+      - name: user
+        in: path
+        description: User id
+        required: true
+        schema:
+          type: string
+      - name: run
+        in: path
+        description: Run id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserRunsResponse'
+        422:
+          description: The given parameters were faulty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - passport: {}
+components:
+  schemas:
+    CheckpointType:
+      type: string
+      enum:
+      - start
+      - checkpoint
+      - arrival
+    LikableEntities:
+      type: string
+      enum:
+      - post
+      - commentary
+      - run
+    NominationPreference:
+      type: string
+      enum:
+      - nick_name
+      - full_name
+    NotificationType:
+      type: string
+      enum:
+      - follow
+      - new_message
+      - new_group
+      - deleted_group
+      - expelled_from_group
+    RequestTypesEnum:
+      type: string
+      enum:
+      - friendship_request
+    Restriction:
+      type: string
+      enum:
+      - private
+      - friends
+      - followers
+      - public
+    RestrictionFields:
+      type: string
+      enum:
+      - visibility
+      - writing_restriction
+    UpdateGroupRequestType:
+      type: string
+      enum:
+      - update_user_rights
+      - add_user
+      - add_user_as_admin
+      - delete_user
+      - update_group_name
+    VisibilityType:
+      type: string
+      enum:
+      - private
+      - public
+    CheckpointModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - type
+        - location
+        - run_id
+        - previous_checkpoint_id
+        - created_at
+        - updated_at
+        properties:
+          id:
+            type: string
+            format: uuid
+          type:
+            type: string
+            $ref: '#/components/schemas/CheckpointType'
+          location:
+            type: array
+            items:
+              type: array
+              items:
+                type: number
+              example:
+              - 'longitude : 3.14'
+              - 'latitude : 42.0'
+          run_id:
+            type: string
+            format: uuid
+          previous_checkpoint_id:
+            type: string
+            format: uuid
+          times:
+            type: array
+            items:
+              $ref: '#/components/schemas/TimeModel'
+        type: object
+    CommentaryModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - content
+        - post_id
+        - author_id
+        - author
+        - created_at
+        - updated_at
+        properties:
+          id:
+            type: string
+            format: uuid
+          content:
+            type: string
+            example: this is a post.
+          post_id:
+            type: string
+            format: uuid
+          author_id:
+            type: string
+            format: uuid
+          author:
+            $ref: '#/components/schemas/UserModel'
+        type: object
+    CustomCheckpointsSetModel:
+      required:
+      - id
+      - location
+      properties:
+        id:
+          type: number
+          example: 1
+        location:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+            example:
+            - 'longitude : 3.14'
+            - 'latitude : 42.0'
+      type: object
+    FollowerModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - user_id
+        - followed_id
+        - followers
+        - created_at
+        - updated_at
+        properties:
+          id:
+            type: string
+            format: uuid
+          user_id:
+            type: string
+            format: uuid
+          followed_id:
+            type: string
+            format: uuid
+          followers:
+            $ref: '#/components/schemas/UserModel'
+        type: object
+    FollowingModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - user_id
+        - followed_id
+        - following
+        - created_at
+        - updated_at
+        properties:
+          id:
+            type: string
+            format: uuid
+          user_id:
+            type: string
+            format: uuid
+          followed_id:
+            type: string
+            format: uuid
+          following:
+            $ref: '#/components/schemas/UserModel'
+        type: object
+    FriendshipModel:
+      required:
+      - id
+      - user_id
+      - friend_id
+      - friend
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        followed_id:
+          type: string
+          format: uuid
+        friend:
+          $ref: '#/components/schemas/UserModel'
+      type: object
+    GroupMemberModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - group_id
+        - user_id
+        - is_admin
+        - created_at
+        - updated_at
+        properties:
+          group_id:
+            type: string
+            format: uuid
+          user_id:
+            type: string
+            format: uuid
+          is_admin:
+            type: boolean
+        type: object
+    GroupModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - name
+        - created_at
+        - updated_at
+        - group_members
+        - latest_messages
+        properties:
+          id:
+            type: string
+            format: uuid
+          name:
+            type: string
+            example: this is a group name
+          group_members:
+            type: array
+            items:
+              $ref: '#/components/schemas/GroupMemberModel'
+          latest_messages:
+            type: array
+            items:
+              $ref: '#/components/schemas/MessageModel'
+        type: object
+    LikeModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - like_id
+        - liked_id
+        - liked_type
+        - liker_id
+        - created_at
+        - updated_at
+        properties:
+          like_id:
+            type: string
+            format: uuid
+          liked_id:
+            type: string
+            format: uuid
+          liked_type:
+            $ref: '#/components/schemas/LikableEntities'
+          liker_id:
+            type: string
+            format: uuid
+        type: object
+    MessageModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - contents
+        - group_id
+        - user_id
+        - created_at
+        - updated_at
+        - user
+        properties:
+          id:
+            type: string
+            format: uuid
+          contents:
+            type: string
+            example: this is a message.
+          group_id:
+            type: string
+            format: uuid
+          user_id:
+            type: string
+            format: uuid
+          user:
+            $ref: '#/components/schemas/UserMessageModel'
+        type: object
+    NotificationGroupModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimestampNotificationModel'
+      - required:
+        - id
+        - type
+        - notifiable_type
+        - notifiable_id
+        properties:
+          id:
+            type: string
+            format: uuid
+          type:
+            type: string
+            example: App\Notifications\NewGroupNotification
+          notifiable_type:
+            type: string
+            example: App\Models\User
+          notifiable_id:
+            type: string
+            format: uuid
+          data:
+            $ref: '#/components/schemas/NotificationModelGroupData'
+        type: object
+    NotificationModelGroupData:
+      required:
+      - data
+      - notification_type
+      properties:
+        data:
+          $ref: '#/components/schemas/NotificationGroupModelDataContents'
+        notification_type:
+          $ref: '#/components/schemas/NotificationType'
+      type: object
+    NotificationGroupModelDataContents:
+      required:
+      - message
+      - group
+      properties:
+        message:
+          type: string
+          example: You were added to a new group Elenaburgh by Loïc Lopez.
+        group:
+          $ref: '#/components/schemas/GroupModel'
+      type: object
+    NotificationMessageModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimestampNotificationModel'
+      - required:
+        - id
+        - type
+        - notifiable_type
+        - notifiable_id
+        properties:
+          id:
+            type: string
+            format: uuid
+          type:
+            type: string
+            example: App\Notifications\NewGroupNotification
+          notifiable_type:
+            type: string
+            example: App\Models\User
+          notifiable_id:
+            type: string
+            format: uuid
+          data:
+            $ref: '#/components/schemas/NotificationModelMessageData'
+        type: object
+    NotificationModelMessageData:
+      required:
+      - data
+      - notification_type
+      properties:
+        data:
+          $ref: '#/components/schemas/MessageModel'
+        notification_type:
+          $ref: '#/components/schemas/NotificationType'
+      type: object
+    PendingRequestModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - request_id
+        - requester_id
+        - type
+        - target_id
+        - user
+        - created_at
+        - updated_at
+        properties:
+          request_id:
+            type: string
+            format: uuid
+          type:
+            $ref: '#/components/schemas/RequestTypesEnum'
+          requester_id:
+            type: string
+            format: uuid
+          target_id:
+            type: string
+            format: uuid
+          user:
+            $ref: '#/components/schemas/UserModel'
+        type: object
+    PostModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - content
+        - dashboard_id
+        - author_id
+        - author
+        - commentaries
+        - created_at
+        - updated_at
+        properties:
+          id:
+            type: string
+            format: uuid
+          contents:
+            type: string
+            example: this is a post.
+          dashboard_id:
+            type: string
+            format: uuid
+          author_id:
+            type: string
+            format: uuid
+          author:
+            $ref: '#/components/schemas/UserModel'
+          commentaries:
+            type: array
+            items:
+              $ref: '#/components/schemas/CommentaryModel'
+            maxLength: 3
+        type: object
+    RecordModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - run_id
+        - best_time
+        - best_time_run_id
+        - sum_of_best
+        - user_id
+        - best_segments
+        - total_distance
+        - average_speed_on_best_time
+        - distance_between_cps
+        - best_speed_between_cps
+        - created_at
+        - updated_at
+        properties:
+          id:
+            type: string
+            format: uuid
+          run_id:
+            type: string
+            format: uuid
+          best_time:
+            type: number
+            example: '42'
+          best_time_run_id:
+            type: string
+            format: uuid
+          sum_of_best:
+            type: number
+            example: '104'
+          user_id:
+            type: string
+            format: uuid
+          best_segments:
+            type: array
+            items:
+              type: number
+          total_distance:
+            type: number
+            example: '2.385'
+          average_speed_on_best_time:
+            type: number
+            example: '11.541'
+          distance_between_cps:
+            type: array
+            items:
+              type: number
+          best_speed_between_cps:
+            type: array
+            items:
+              type: number
+        type: object
+    RunModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - description
+        - creator_id
+        - visibility
+        - name
+        - created_at
+        - updated_at
+        properties:
+          id:
+            type: string
+            format: uuid
+          description:
+            type: string
+            example: This is a description.
+          creator_id:
+            type: string
+            format: uuid
+          visibility:
+            type: string
+            $ref: '#/components/schemas/VisibilityType'
+          name:
+            type: string
+            example: This is a name.
+          checkpoints:
+            type: array
+            items:
+              $ref: '#/components/schemas/CheckpointModel'
+        type: object
+    SimpleRunModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - description
+        - creator_id
+        - visibility
+        - name
+        - created_at
+        - updated_at
+        properties:
+          id:
+            type: string
+            format: uuid
+          description:
+            type: string
+            example: This is a description.
+          creator_id:
+            type: string
+            format: uuid
+          visibility:
+            type: string
+            $ref: '#/components/schemas/VisibilityType'
+          name:
+            type: string
+            example: This is a name.
+        type: object
+    TimeModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - current_time
+        - check_point_id
+        - run_id
+        - user_run_id
+        - created_at
+        - updated_at
+        properties:
+          id:
+            type: string
+            format: uuid
+          current_time:
+            type: number
+            example: '1554753102'
+          check_point_id:
+            type: string
+            format: uuid
+          run_id:
+            type: string
+            format: uuid
+          user_run_id:
+            type: string
+            format: uuid
+        type: object
+    UserMessageModel:
+      required:
+      - id
+      - first_name
+      - last_name
+      - nick_name
+      properties:
+        id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+          example: John
+        last_name:
+          type: string
+          example: Doe
+        nick_name:
+          type: string
+          example: JDoe
+      type: object
+    UserModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - first_name
+        - last_name
+        - email
+        - nick_name
+        - created_at
+        - updated_at
+        properties:
+          id:
+            type: string
+            format: uuid
+          first_name:
+            type: string
+            example: John
+          last_name:
+            type: string
+            example: Walter
+          email:
+            type: string
+            format: email
+          nick_name:
+            type: string
+            example: Nickname
+        type: object
+    UserProfileModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - birthday
+        - city
+        - description
+        - avatar_id
+        - cover_id
+        - created_at
+        - updated_at
+        properties:
+          id:
+            type: string
+            format: uuid
+          birthday:
+            type: date
+            example: '2000-01-01'
+          city:
+            type: string
+            format: Ville
+          description:
+            type: string
+            format: C'est une description
+          avatar_id:
+            type: string
+            format: uuid
+          cover_id:
+            type: string
+            format: uuid
+        type: object
+    UserRunModel:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - run_id
+        - user_id
+        - final_time
+        - created_at
+        - updated_at
+        properties:
+          id:
+            type: string
+            format: uuid
+          run_id:
+            type: string
+            format: uuid
+          user_id:
+            type: string
+            format: uuid
+          final_time:
+            type: number
+            example: '458'
+          times:
+            type: array
+            items:
+              $ref: '#/components/schemas/TimeModel'
+        type: object
+    PaginationScheme:
+      properties:
+        first_page_url:
+          type: string
+          example: http://api.exosuite.local/$RESSOURCE_URI?page=1
+        from:
+          type: string
+          example: '1'
+        last_page:
+          type: string
+          example: '2'
+        last_page_url:
+          type: string
+          example: http://api.exosuite.local/$RESSOURCE_URI?page=2
+        next_page_url:
+          type: string
+          example: http://api.exosuite.local/$RESSOURCE_URI?page=2
+        path:
+          type: string
+          example: http://api.exosuite.local/$RESSOURCE_URI
+        per_page:
+          type: integer
+          example: 30
+        prev_page_url:
+          type: string
+          example: 'null'
+        to:
+          type: string
+          example: '30'
+        total:
+          type: string
+          example: '40'
+      type: object
+    PostgisPointExample:
+      properties:
+        longitude:
+          type: number
+        latitude:
+          type: number
+      type: object
+    CreateCheckpoint:
+      required:
+      - type
+      - location
+      properties:
+        type:
+          $ref: '#/components/schemas/CheckpointType'
+        location:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+            example:
+            - 'longitude : 3.14'
+            - 'latitude : 42.0'
+      type: object
+    CreateCheckpoints:
+      required:
+      - data
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomCheckpointsSetModel'
+      type: object
+    CreateCommentary:
+      required:
+      - content
+      properties:
+        content:
+          type: string
+      type: object
+    CreateFollow:
+      required:
+      - user
+      properties:
+        user:
+          type: string
+      type: object
+    CreateFriendshipRequestResponse:
+      required:
+      - request_id
+      - requester_id
+      - type
+      - target_id
+      properties:
+        request_id:
+          type: string
+          format: uuid
+        requester_id:
+          type: string
+          format: uuid
+        type:
+          type: string
+        target_id:
+          type: string
+          format: uuid
+      type: object
+    CreateGroup:
+      required:
+      - users
+      properties:
+        users:
+          type: array
+          items:
+            type: string
+          example:
+          - 67eeab70-19f4-11e9-b4d2-476c47235c92
+          - 969fc1b0-1f28-11e9-9ac9-4da5046d4048
+        name:
+          type: string
+      type: object
+    CreateMessage:
+      required:
+      - contents
+      properties:
+        contents:
+          type: string
+          example: This is a message
+      type: object
+    CreatePendingRequest:
+      required:
+      - type
+      properties:
+        type:
+          type: string
+      type: object
+    CreatePost:
+      required:
+      - content
+      properties:
+        content:
+          type: string
+      type: object
+    CreateRecord:
+      required:
+      - user_run_id
+      properties:
+        user_run_id:
+          type: string
+          format: uuid
+      type: object
+    CreateRun:
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          example: This is a name
+        description:
+          type: string
+          example: This is a description
+        visibility:
+          $ref: '#/components/schemas/VisibilityType'
+      type: object
+    CreateTime:
+      required:
+      - current_time
+      - user_run_id
+      properties:
+        current_time:
+          type: number
+          example: '1554753102'
+        user_run_id:
+          type: string
+          format: uuid
+      type: object
+    Login:
+      required:
+      - email
+      - password
+      properties:
+        email:
+          type: string
+          example: foo@bar.com
+        password:
+          type: string
+      type: object
+    PatchCheckpoint:
+      required:
+      - type
+      - location
+      properties:
+        type:
+          $ref: '#/components/schemas/CheckpointType'
+        location:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+            example:
+            - 'longitude : 3.14'
+            - 'latitude : 42.0'
+      type: object
+    PatchCommentary:
+      required:
+      - content
+      properties:
+        content:
+          type: string
+      type: object
+    PatchDashboardRestriction:
+      required:
+      - restriction_field
+      - restriction_level
+      properties:
+        restriction_field:
+          $ref: '#/components/schemas/RestrictionFields'
+        restriction_level:
+          $ref: '#/components/schemas/Restriction'
+      type: object
+    PatchGroup:
+      required:
+      - request_type
+      properties:
+        request_type:
+          $ref: '#/components/schemas/UpdateGroupRequestType'
+        user_id:
+          type: string
+          example: add4ac90-1f28-11e9-bab5-134fb5cf2ffe
+        is_admin:
+          type: boolean
+          example: 'true'
+        name:
+          type: string
+          example: Generic Name
+      type: object
+    PatchMessage:
+      required:
+      - contents
+      properties:
+        contents:
+          type: string
+          example: This is a message
+      type: object
+    PatchPost:
+      required:
+      - content
+      properties:
+        content:
+          type: string
+      type: object
+    PatchRecord:
+      required:
+      - user_run_id
+      properties:
+        user_run_id:
+          type: string
+          format: uuid
+      type: object
+    PatchRun:
+      required: {}
+      properties:
+        name:
+          type: string
+          example: This is a name
+        description:
+          type: string
+          example: This is a description
+        visibility:
+          $ref: '#/components/schemas/VisibilityType'
+      type: object
+    PatchTime:
+      required:
+      - current_time
+      properties:
+        current_time:
+          type: number
+          example: '1554753102'
+      type: object
+    Register:
+      required:
+      - first_name
+      - last_name
+      - email
+      - password
+      - password_confirmation
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        nick_name:
+          type: string
+        password:
+          type: string
+        password_confirmation:
+          type: string
+      type: object
+    UserProfile:
+      properties:
+        birthday:
+          description: Date in UTC Format YYYY-MM-DD
+          type: string
+          format: date-time
+        description:
+          type: string
+        city:
+          type: string
+      type: object
+    UserProfileRestrictions:
+      properties:
+        birthday:
+          $ref: '#/components/schemas/Restriction'
+        city:
+          $ref: '#/components/schemas/Restriction'
+        description:
+          $ref: '#/components/schemas/Restriction'
+        nomination_preference:
+          $ref: '#/components/schemas/NominationPreference'
+      type: object
+    CreateCheckpointResponse:
+      required:
+      - name
+      - id
+      - visibility
+      - description
+      - creator_id
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          $ref: '#/components/schemas/CheckpointType'
+        location:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+            example:
+            - 'longitude : 3.14'
+            - 'latitude : 42.0'
+        run_id:
+          type: string
+          format: uuid
+        previous_checkpoint_id:
+          type: string
+          format: uuid
+      type: object
+    GetCheckpointByIDResponse:
+      required:
+      - name
+      - id
+      - visibility
+      - description
+      - creator_id
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          $ref: '#/components/schemas/CheckpointType'
+        location:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+            example:
+            - 'longitude : 3.14'
+            - 'latitude : 42.0'
+        run_id:
+          type: string
+          format: uuid
+        previous_checkpoint_id:
+          type: string
+          format: uuid
+      type: object
+    GetCheckpointsResponse:
+      allOf:
+      - $ref: '#/components/schemas/PaginationScheme'
+      - required:
+        - data
+        - first_page_url
+        - from
+        - last_page
+        - next_page_url
+        - last_page_url
+        - path
+        - per_page
+        - prev_page_url
+        - to
+        - total
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/CheckpointModel'
+        type: object
+    PatchCheckpointResponse:
+      required:
+      - name
+      - id
+      - visibility
+      - description
+      - creator_id
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          $ref: '#/components/schemas/CheckpointType'
+        location:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+            example:
+            - 'longitude : 3.14'
+            - 'latitude : 42.0'
+        run_id:
+          type: string
+          format: uuid
+        previous_checkpoint_id:
+          type: string
+          format: uuid
+      type: object
+    CreateCommentaryResponse:
+      required:
+      - content
+      - id
+      - post_id
+      - author_id
+      properties:
+        content:
+          description: contenu du commentaire
+          type: string
+        id:
+          type: string
+          format: uuid
+        post_id:
+          type: string
+          format: uuid
+        author_id:
+          type: string
+          format: uuid
+      type: object
+    GetCommentariesResponse:
+      allOf:
+      - $ref: '#/components/schemas/PaginationScheme'
+      - required:
+        - data
+        - first_page_url
+        - from
+        - last_page
+        - next_page_url
+        - last_page_url
+        - path
+        - per_page
+        - prev_page_url
+        - to
+        - total
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/CommentaryModel'
+        type: object
+    PatchCommentaryResponse:
+      required:
+      - id
+      - post_id
+      - author_id
+      - content
+      properties:
+        content:
+          type: string
+        id:
+          type: string
+          format: uuid
+        post_id:
+          type: string
+          format: uuid
+        author_id:
+          type: string
+          format: uuid
+      type: object
+    GetDashboardIdResponse:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - owner_id
+        - visibility
+        - writing_restriction
+        - created_at
+        - updated_at
+        properties:
+          id:
+            type: string
+            format: uuid
+          owner_id:
+            type: string
+            format: uuid
+          visibility:
+            $ref: '#/components/schemas/Restriction'
+          writing_restriction:
+            $ref: '#/components/schemas/Restriction'
+        type: object
+    GetDashboardRestrictionResponse:
+      required:
+      - visibility
+      - writing_restriction
+      properties:
+        visibility:
+          $ref: '#/components/schemas/Restriction'
+        writing_restriction:
+          $ref: '#/components/schemas/Restriction'
+      type: object
+    PatchDashboardRestrictionResponse:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - owner_id
+        - visibility
+        - writing_restriction
+        - created_at
+        - updated_at
+        properties:
+          id:
+            type: string
+            format: uuid
+          owner_id:
+            type: string
+            format: uuid
+          visibility:
+            $ref: '#/components/schemas/Restriction'
+          writing_restriction:
+            $ref: '#/components/schemas/Restriction'
+        type: object
+    ErrorResponse:
+      required:
+      - message
+      - errors
+      properties:
+        message:
+          type: string
+          example: The given data was invalid.
+        errors:
+          type: array
+          items:
+            type: string
+          example:
+            email:
+            - The email field is required.
+            password:
+            - The password field is required.
+      type: object
+    CreateFollowResponse:
+      required:
+      - follow_id
+      - user_id
+      - followed_id
+      properties:
+        follow_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        followed_id:
+          type: string
+          format: uuid
+      type: object
+    GetAmIFollowingResponse:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - user_id
+        - id
+        - followed_id
+        - created_at
+        - updated_at
+        properties:
+          id:
+            type: string
+            format: uuid
+          user_id:
+            type: string
+            format: uuid
+          followed_id:
+            type: string
+            format: uuid
+        type: object
+    GetFollowersCountResponse:
+      required:
+      - total
+      properties:
+        total:
+          type: integer
+          example: '4'
+      type: object
+    GetFollowersResponse:
+      allOf:
+      - $ref: '#/components/schemas/PaginationScheme'
+      - required:
+        - data
+        - first_page_url
+        - from
+        - last_page
+        - next_page_url
+        - last_page_url
+        - path
+        - per_page
+        - prev_page_url
+        - to
+        - total
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/FollowerModel'
+        type: object
+    GetFollowsResponse:
+      required:
+      - data
+      - first_page_url
+      - from
+      - last_page
+      - next_page_url
+      - last_page_url
+      - path
+      - per_page
+      - prev_page_url
+      - to
+      - total
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/FollowingModel'
+      type: object
+    CreateFriendshipResponse:
+      required:
+      - friendship_id
+      - user_id
+      - friend_id
+      properties:
+        friendship_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        friend_id:
+          type: string
+          format: uuid
+      type: object
+    GetFriendshipsResponse:
+      required:
+      - friendships_array
+      properties:
+        friendships_array:
+          type: array
+          items:
+            $ref: '#/components/schemas/FriendshipModel'
+      type: object
+    GetMyFriendshipWithResponse:
+      required:
+      - value
+      - friendship_entity
+      properties:
+        value:
+          type: boolean
+          example: true
+        friendship_entity:
+          $ref: '#/components/schemas/FriendshipModel'
+      type: object
+    CreateGroupResponse:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - name
+        - created_at
+        - updated_at
+        - group_members
+        properties:
+          id:
+            type: string
+            format: uuid
+          name:
+            type: string
+            example: this is a group name
+          group_members:
+            type: array
+            items:
+              $ref: '#/components/schemas/GroupMemberModel'
+        type: object
+    PatchGroupResponse:
+      required: {}
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+        group_members:
+          type: array
+          items:
+            type: string
+          example:
+          - 67eeab70-19f4-11e9-b4d2-476c47235c92
+          - 969fc1b0-1f28-11e9-9ac9-4da5046d4048
+      type: object
+    CreateLikeOnCommentaryResponse:
+      required:
+      - like_id
+      - liked_id
+      - liked_type
+      - liker_id
+      properties:
+        like_id:
+          type: string
+          format: uuid
+        liked_id:
+          type: string
+          format: uuid
+        liked_type:
+          type: string
+        liker_id:
+          type: string
+          format: uuid
+      type: object
+    CreateLikeOnPostResponse:
+      required:
+      - like_id
+      - liked_id
+      - liked_type
+      - liker_id
+      properties:
+        like_id:
+          type: string
+          format: uuid
+        liked_id:
+          type: string
+          format: uuid
+        liked_type:
+          type: string
+        liker_id:
+          type: string
+          format: uuid
+      type: object
+    GetLikesFromCommentaryResponse:
+      required:
+      - data
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/LikeModel'
+      type: object
+    GetlikesFromPostResponse:
+      allOf:
+      - $ref: '#/components/schemas/PaginationScheme'
+      - required:
+        - data
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/LikeModel'
+        type: object
+    CreateMessageResponse:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - contents
+        - user_id
+        - group_id
+        - id
+        - user
+        properties:
+          contents:
+            type: string
+            example: This is a message
+          user_id:
+            type: string
+            format: uuid
+          group_id:
+            type: string
+            format: uuid
+          id:
+            type: string
+            format: uuid
+          user:
+            $ref: '#/components/schemas/UserMessageModel'
+        type: object
+    GetMessageResponse:
+      allOf:
+      - $ref: '#/components/schemas/PaginationScheme'
+      - required:
+        - data
+        - first_page_url
+        - from
+        - last_page
+        - next_page_url
+        - last_page_url
+        - path
+        - per_page
+        - prev_page_url
+        - to
+        - total
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/MessageModel'
+        type: object
+    PatchMessageResponse:
+      required:
+      - contents
+      - user_id
+      - group_id
+      - id
+      - user
+      properties:
+        contents:
+          type: string
+          example: This is a message
+        user_id:
+          type: string
+          example: 67eeab70-19f4-11e9-b4d2-476c47235c92
+        group_id:
+          type: string
+          example: 67eeca70-19f4-11e9-b882-476c47252c92
+        id:
+          type: string
+          example: 67eeca70-19f4-1ae9-b122-469c47252c92
+        user:
+          $ref: '#/components/schemas/UserMessageModel'
+      type: object
+    GetNotificationsResponse:
+      allOf:
+      - $ref: '#/components/schemas/PaginationScheme'
+      - required:
+        - data
+        - first_page_url
+        - from
+        - last_page
+        - next_page_url
+        - last_page_url
+        - path
+        - per_page
+        - prev_page_url
+        - to
+        - total
+        properties:
+          data:
+            type: array
+            items:
+              anyOf:
+              - property: data
+                $ref: '#/components/schemas/NotificationMessageModel'
+              - property: data
+                $ref: '#/components/schemas/NotificationGroupModel'
+        type: object
+    CreatePendingRequestResponse:
+      required:
+      - request_id
+      - requester_id
+      - type
+      - target_id
+      properties:
+        request_id:
+          type: string
+          format: uuid
+        requester_id:
+          type: string
+          format: uuid
+        target_id:
+          type: string
+          format: uuid
+        type:
+          $ref: '#/components/schemas/RequestTypesEnum'
+      type: object
+    GetPendingRequestsResponse:
+      required:
+      - pending_requests_array
+      properties:
+        pending_requests_array:
+          type: array
+          items:
+            type: pending_requests
+          example:
+          - - request_id => 67eeab70-19f4-11e9-b4d2-476c47235c92
+            - requester_id => 67eeca70-19f4-11e9-b882-476c47252c92
+            - type => friendship_request
+            - target_id => 67eeca70-19f4-1ae9-b822-469c47252ca7
+          - - request_id => 67eeab70-19f4-11e9-b4d2-476c47235c92
+            - requester_id => 67eeca70-19f4-11e9-b882-476c47252c92
+            - type => friendship_request
+            - target_id => 67eeca70-19f4-1ae9-b822-469c47252ca7
+      type: object
+    CreatePostResponse:
+      required:
+      - content
+      - id
+      - dashboard_id
+      - author_id
+      properties:
+        content:
+          type: string
+        id:
+          type: string
+          format: uuid
+        dashboard_id:
+          type: string
+          format: uuid
+        author_id:
+          type: string
+          format: uuid
+      type: object
+    GetPostsResponse:
+      allOf:
+      - $ref: '#/components/schemas/PaginationScheme'
+      - required:
+        - data
+        - first_page_url
+        - from
+        - last_page
+        - next_page_url
+        - last_page_url
+        - path
+        - per_page
+        - prev_page_url
+        - to
+        - total
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/PostModel'
+        type: object
+    PatchPostResponse:
+      required:
+      - id
+      - dashboard_id
+      - author_id
+      - content
+      properties:
+        id:
+          type: string
+          format: uuid
+        dashboard_id:
+          type: string
+          format: uuid
+        author_id:
+          type: string
+          format: uuid
+        content:
+          type: string
+      type: object
+    GetUserProfileResponse:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - id
+        - first_name
+        - last_name
+        - email
+        - nick_name
+        - profile
+        - created_at
+        - updated_at
+        properties:
+          id:
+            type: string
+            format: uuid
+          first_name:
+            type: string
+            example: John
+          last_name:
+            type: string
+            example: Walter
+          email:
+            type: string
+            format: email
+          nick_name:
+            type: string
+            example: Nickname
+          profile:
+            $ref: '#/components/schemas/UserProfileModel'
+        type: object
+    ProfileRestrictions:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - user_id
+        - birthday
+        - city
+        - description
+        - nomination_preference
+        - created_at
+        - updated_at
+        properties:
+          user_id:
+            type: string
+            format: uuid
+          birthday:
+            $ref: '#/components/schemas/Restriction'
+          city:
+            $ref: '#/components/schemas/Restriction'
+          description:
+            $ref: '#/components/schemas/Restriction'
+          nomination_preference:
+            $ref: '#/components/schemas/NominationPreference'
+        type: object
+    CreateRecordResponse:
+      required:
+      - id
+      - run_id
+      - best_time
+      - best_time_run_id
+      - sum_of_best
+      - user_id
+      - best_segments
+      - total_distance
+      - average_speed_on_best_time
+      - distance_between_cps
+      - best_speed_between_cps
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        run_id:
+          type: string
+          format: uuid
+        best_time:
+          type: number
+          example: '42'
+        best_time_run_id:
+          type: string
+          format: uuid
+        sum_of_best:
+          type: number
+          example: '104'
+        user_id:
+          type: string
+          format: uuid
+        best_segments:
+          type: array
+          items:
+            type: number
+        total_distance:
+          type: number
+          example: '2.385'
+        average_speed_on_best_time:
+          type: number
+          example: '11.541'
+        distance_between_cps:
+          type: array
+          items:
+            type: number
+        best_speed_between_cps:
+          type: array
+          items:
+            type: number
+      type: object
+    GetRecordsResponse:
+      required:
+      - id
+      - run_id
+      - best_time
+      - best_time_run_id
+      - sum_of_best
+      - user_id
+      - best_segments
+      - total_distance
+      - average_speed_on_best_time
+      - distance_between_cps
+      - best_speed_between_cps
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        run_id:
+          type: string
+          format: uuid
+        best_time:
+          type: number
+          example: '42'
+        best_time_run_id:
+          type: string
+          format: uuid
+        sum_of_best:
+          type: number
+          example: '104'
+        user_id:
+          type: string
+          format: uuid
+        best_segments:
+          type: array
+          items:
+            type: number
+        total_distance:
+          type: number
+          example: '2.385'
+        average_speed_on_best_time:
+          type: number
+          example: '11.541'
+        distance_between_cps:
+          type: array
+          items:
+            type: number
+        best_speed_between_cps:
+          type: array
+          items:
+            type: number
+      type: object
+    PatchRecordResponse:
+      required:
+      - id
+      - run_id
+      - best_time
+      - best_time_run_id
+      - sum_of_best
+      - user_id
+      - best_segments
+      - total_distance
+      - average_speed_on_best_time
+      - distance_between_cps
+      - best_speed_between_cps
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        run_id:
+          type: string
+          format: uuid
+        best_time:
+          type: number
+          example: '42'
+        best_time_run_id:
+          type: string
+          format: uuid
+        sum_of_best:
+          type: number
+          example: '104'
+        user_id:
+          type: string
+          format: uuid
+        best_segments:
+          type: array
+          items:
+            type: number
+        total_distance:
+          type: number
+          example: '2.385'
+        average_speed_on_best_time:
+          type: number
+          example: '11.541'
+        distance_between_cps:
+          type: array
+          items:
+            type: number
+        best_speed_between_cps:
+          type: array
+          items:
+            type: number
+      type: object
+    CreateRunResponse:
+      required:
+      - name
+      - id
+      - visibility
+      - description
+      - creator_id
+      properties:
+        name:
+          type: string
+          example: This is a name
+        id:
+          type: string
+          example: e3128fa0-5a18-11e9-8869-e920492aee8b
+        visibility:
+          $ref: '#/components/schemas/VisibilityType'
+        creator_id:
+          type: string
+          example: e3128fa0-5a18-11e9-8869-e921864az8ct
+        description:
+          type: string
+          example: This is a description
+      type: object
+    GetRunByIDResponse:
+      required:
+      - name
+      - id
+      - visibility
+      - description
+      - creator_id
+      properties:
+        name:
+          type: string
+          example: This is a name
+        id:
+          type: string
+          example: e3128fa0-5a18-11e9-8869-e920492aee8b
+        visibility:
+          $ref: '#/components/schemas/VisibilityType'
+        creator_id:
+          type: string
+          example: e3128fa0-5a18-11e9-8869-e921864az8ct
+        description:
+          type: string
+          example: This is a description
+      type: object
+    GetRunsResponse:
+      allOf:
+      - $ref: '#/components/schemas/PaginationScheme'
+      - required:
+        - data
+        - first_page_url
+        - from
+        - last_page
+        - next_page_url
+        - last_page_url
+        - path
+        - per_page
+        - prev_page_url
+        - to
+        - total
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/RunModel'
+        type: object
+    PatchRunResponse:
+      required:
+      - name
+      - id
+      - description
+      - visibility
+      - creator_id
+      properties:
+        name:
+          type: string
+          example: This is a name
+        id:
+          type: string
+          example: e3128fa0-5a18-11e9-8869-e920492aee8b
+        visibility:
+          $ref: '#/components/schemas/VisibilityType'
+        creator_id:
+          type: string
+          example: e3128fa0-5a18-11e9-8869-e921864az8ct
+        description:
+          type: string
+          example: This is a description
+      type: object
+    SearchRunsResponse:
+      allOf:
+      - $ref: '#/components/schemas/PaginationScheme'
+      - required:
+        - data
+        - first_page_url
+        - from
+        - last_page
+        - next_page_url
+        - last_page_url
+        - path
+        - per_page
+        - prev_page_url
+        - to
+        - total
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/SimpleRunModel'
+        type: object
+    CreateTimeResponse:
+      required:
+      - id
+      - current_time
+      - check_point_id
+      - run_id
+      properties:
+        id:
+          type: string
+          format: uuid
+        current_time:
+          type: number
+          example: '1554753102'
+        check_point_id:
+          type: string
+          format: uuid
+        run_id:
+          type: string
+          format: uuid
+      type: object
+    GetTimeByIDResponse:
+      required:
+      - id
+      - current_time
+      - check_point_id
+      - run_id
+      - user_run_id
+      properties:
+        id:
+          type: string
+          format: uuid
+        current_time:
+          type: number
+          example: '1554753102'
+        check_point_id:
+          type: string
+          format: uuid
+        run_id:
+          type: string
+          format: uuid
+        user_run_id:
+          type: string
+          format: uuid
+      type: object
+    GetTimesResponse:
+      allOf:
+      - $ref: '#/components/schemas/PaginationScheme'
+      - required:
+        - data
+        - first_page_url
+        - from
+        - last_page
+        - next_page_url
+        - last_page_url
+        - path
+        - per_page
+        - prev_page_url
+        - to
+        - total
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/TimeModel'
+        type: object
+    PatchTimeResponse:
+      required:
+      - id
+      - current_time
+      - check_point_id
+      - run_id
+      - user_run_id
+      properties:
+        id:
+          type: string
+          format: uuid
+        current_time:
+          type: number
+          example: '1554753102'
+        check_point_id:
+          type: string
+          format: uuid
+        run_id:
+          type: string
+          format: uuid
+        user_run_id:
+          type: string
+          format: uuid
+      type: object
+    TokenResponse:
+      required:
+      - token_type
+      - expires_in
+      - access_token
+      - refresh_token
+      properties:
+        token_type:
+          type: string
+        expires_in:
+          type: integer
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+      type: object
+    UserGetMyGroupsResponse:
+      allOf:
+      - $ref: '#/components/schemas/PaginationScheme'
+      - required:
+        - data
+        - first_page_url
+        - from
+        - last_page
+        - next_page_url
+        - last_page_url
+        - path
+        - per_page
+        - prev_page_url
+        - to
+        - total
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/GroupModel'
+        type: object
+    UserResponse:
+      allOf:
+      - $ref: '#/components/schemas/UseTimeStampModel'
+      - required:
+        - first_name
+        - last_name
+        - email
+        - nick_name
+        - id
+        - profile
+        - created_at
+        - updated_at
+        properties:
+          email:
+            type: string
+            example: jean.smith@something.xx
+          first_name:
+            type: string
+            example: Jean
+          last_name:
+            type: string
+            example: Smith
+          nick_name:
+            type: string
+            example: NicknameX
+          id:
+            type: string
+            format: uuid
+          profile:
+            $ref: '#/components/schemas/UserProfileModel'
+        type: object
+    CreateUserRunResponse:
+      required:
+      - id
+      - run_id
+      - user_id
+      - final_time
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        run_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        final_time:
+          type: number
+          example: '0'
+      type: object
+    GetUserRunByIDResponse:
+      required:
+      - id
+      - run_id
+      - user_id
+      - final_time
+      - times
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        run_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        final_time:
+          type: number
+          example: '215'
+        times:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeModel'
+      type: object
+    GetUserRunsResponse:
+      allOf:
+      - $ref: '#/components/schemas/PaginationScheme'
+      - required:
+        - data
+        - first_page_url
+        - from
+        - last_page
+        - next_page_url
+        - last_page_url
+        - path
+        - per_page
+        - prev_page_url
+        - to
+        - total
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/UserRunModel'
+        type: object
+    PatchUserRunResponse:
+      required:
+      - id
+      - run_id
+      - user_id
+      - final_time
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        run_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        final_time:
+          type: number
+          example: '355'
+      type: object
+    UseTimeStampModel:
+      properties:
+        created_at:
+          type: string
+          format: date
+        updated_at:
+          type: string
+          format: date
+      type: object
+    UseTimestampNotificationModel:
+      properties:
+        created_at:
+          type: string
+          format: date
+        updated_at:
+          type: string
+          format: date
+        read_at:
+          type: string
+          format: date
+      type: object
+  securitySchemes:
+    passport:
+      type: oauth2
+      description: Laravel passport oauth2 security.
+      in: header
+      scheme: https
+      flows:
+        password:
+          authorizationUrl: https://api.teamexosuite.cloud/oauth/authorize
+          tokenUrl: https://api.teamexosuite.cloud/oauth/token
+          refreshUrl: https://api.teamexosuite.cloud/token/refresh
+          scopes: {}
